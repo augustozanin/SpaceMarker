@@ -1,4 +1,5 @@
 import pygame
+import time
 from tkinter import simpledialog
 pygame.init()
 # Objeto estrela
@@ -18,11 +19,17 @@ class Estrela:
         branco = (255, 255, 255)
         pygame.draw.circle(surface, branco, self.pos, 3)
 
+        for outra_estrela in estrelas:
+            if outra_estrela != self:
+                pygame.draw.line(surface, branco, self.pos,
+                                 outra_estrela.pos, 1)
+
     # funcao para exibir no console cada estrela cadastrada
-
     def __str__(self):
-        return f"Estrela: {self.nome} - Posição: {self.pos}"
+        return f"Estrela: {self.nome} - Posicao: {self.pos}"
 
+
+        
 
 estrelas = []
 tamanho = (600, 600)
@@ -46,6 +53,24 @@ def adicionar_estrela():
     print(estrela)
 
 
+def salvar_estrela(estrelas):
+    print("executou a função salvar estrela")
+    with open("bd.estrelas", "a") as arquivo:
+        for estrela in estrelas:
+            arquivo.write(str(estrela) + '\n')
+    print("Dados salvos")
+
+
+def delete_estrela(estrelas):
+    confirmacao = input("Tem certeza que deseja deletar todos os registros? (S/N): ")
+    if confirmacao.upper() == "S":
+        estrelas.clear()
+        arquivo = open("bd.estrelas", "w")
+        arquivo.close()
+        print("Registros deletados")
+
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -53,6 +78,16 @@ while running:
         elif event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             adicionar_estrela()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_F10:
+            print("Tecla F10 pressionada!")
+            salvar_estrela(estrelas)
+
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+            print("Tecla F11 pressionada!")
+
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_F12:
+            print("Tecla F12 pressionada!")
+            delete_estrela(estrelas)
 
     display.blit(fundo, (0, 0))
     for estrela in estrelas:
