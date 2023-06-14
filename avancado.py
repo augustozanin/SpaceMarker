@@ -23,13 +23,11 @@ class Estrela:
             if outra_estrela != self:
                 pygame.draw.line(surface, branco, self.pos,
                                  outra_estrela.pos, 1)
-
+    
     # funcao para exibir no console cada estrela cadastrada
     def __str__(self):
         return f"Estrela: {self.nome} - Posicao: {self.pos}"
 
-
-        
 
 estrelas = []
 tamanho = (600, 600)
@@ -60,9 +58,27 @@ def salvar_estrela(estrelas):
             arquivo.write(str(estrela) + '\n')
     print("Dados salvos")
 
+def carregar_estrela():
+    print("Chegou em carregar")
+    try:
+        with open("bd.estrelas", "r") as arquivo:
+            for linha in arquivo:
+                # Extrai as informações da estrela da linha
+                nome_pos = linha.strip().split(" - ")
+                nome = nome_pos[0].split(": ")[1]
+                pos_str = nome_pos[1].split(": ")[1]
+                pos = tuple(map(int, pos_str.strip("()").split(", ")))
+                # Cria um novo objeto Estrela e adiciona à lista estrelas
+                estrela = Estrela(pos, nome)
+                estrelas.append(estrela)
+    except:
+        print("deu errado!")
+    print("Estrelas carregadas com sucesso!")
+
+
 
 def delete_estrela(estrelas):
-    confirmacao = input("Tem certeza que deseja deletar todos os registros? (S/N): ")
+    confirmacao = simpledialog.askstring("Space","Tem certeza que deseja deletar todos os registros? (S/N): ")
     if confirmacao.upper() == "S":
         estrelas.clear()
         arquivo = open("bd.estrelas", "w")
@@ -70,11 +86,14 @@ def delete_estrela(estrelas):
         print("Registros deletados")
 
 
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            salvar_estrela()
             running = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            salvar_estrela()
+            running = False  
         elif event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             adicionar_estrela()
@@ -84,6 +103,7 @@ while running:
 
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
             print("Tecla F11 pressionada!")
+            carregar_estrela()
 
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_F12:
             print("Tecla F12 pressionada!")
