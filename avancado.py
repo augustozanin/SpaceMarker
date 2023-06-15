@@ -1,5 +1,4 @@
 import pygame
-import time
 import math
 from tkinter import simpledialog
 pygame.init()
