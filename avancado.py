@@ -1,5 +1,6 @@
 import pygame
 import time
+import math
 from tkinter import simpledialog
 pygame.init()
 # Objeto estrela
@@ -21,8 +22,17 @@ class Estrela:
 
         for outra_estrela in estrelas:
             if outra_estrela != self:
-                pygame.draw.line(surface, branco, self.pos,
-                                 outra_estrela.pos, 1)
+                distancia = self.calcular_distancia(outra_estrela)
+                texto_distancia = font.render(
+                    f"{distancia:.2f}", True, (255, 255, 255))
+                display.blit(texto_distancia, ((self.pos[0] + outra_estrela.pos[0]) // 2, (self.pos[1] + outra_estrela.pos[1]) // 2))
+                pygame.draw.line(surface, branco, self.pos, outra_estrela.pos, 1)
+    
+    def calcular_distancia(self, outra_estrela):
+        dx = outra_estrela.pos[0] - self.pos[0]
+        dy = outra_estrela.pos[1] - self.pos[1]
+        distancia = math.sqrt(dx**2 + dy**2)
+        return distancia
     
     # funcao para exibir no console cada estrela cadastrada
     def __str__(self):
